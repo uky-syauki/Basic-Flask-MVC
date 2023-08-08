@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+    <div class="container pt-4">
+        <!-- Section: Main chart -->
+        <section class="mb-4">
+            <h1>{{ pesan.satu }} <sup style="font-size: 10px;;">{{ pesan.dua }} <b> {{ pesan.tiga }}</b></sup></h1>
+            {% for isi in info %}
+            <div>
+                <h4>{{ isi.nama }}: <sup>{{ isi.pesan }}</sup></h4>
+            </div>
+            {% endfor %}
+            <h1>Total transaksi: {{ info_penjualan["total_transaksi"] }}</h1>
+            <h1>Total nilai transaksi: {{ info_penjualan['total_nilai_transaksi'] }}</h1>
+            <h1>Total nilai bersih: {{ info_penjualan[total_nilai_bersih]}}</h1>
+        </section>
+        <!--Section: Statistics with subtitles-->
+    </div>
+
+<!--Main layout-->
+
+{% endblock %}

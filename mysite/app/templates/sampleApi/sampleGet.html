@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access API with jQuery and JSON.parse</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Data from API</h2>
+    <p id="result">
+        <!-- Data dari API akan ditampilkan di sini -->
+    </p>
+
+    <script>
+        // Mendefinisikan URL API Flask yang ingin diakses
+        const apiUrl = 'https://coconut012.pythonanywhere.com/api/tambah';
+
+        // Melakukan permintaan GET ke API menggunakan jQuery
+        $.get(apiUrl, function(data) {
+            // Data JSON berhasil diterima
+            // Gunakan JSON.parse untuk mengurai data menjadi objek JavaScript
+            console.log(data);
+            console.log(data['nama']);
+
+            // const parsedData = JSON.parse(data);
+            // Tampilkan data di elemen HTML dengan ID 'result'
+            // const resultElement = document.getElementById('result');
+            // resultElement.textContent = `Name: ${parsedData.nama}, Email: ${parsedData.email}`;
+        }).fail(function(xhr, status, error) {
+            // Kesalahan dalam mengakses API
+            console.error('AJAX error:', error);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--Main layout-->
+
+<div class="container">
+    <h3>HALAMAN TRANSAKSI</h3>
+    <!-- <form class="row g-3"> -->
+    <form action="" method="post">
+        <div class="input-group mb-4">
+            <div class="input-group-text">
+                <span class="btn ">INFO: {{ instansInfo['total'] }} / {{ '{:,}'.format(instansInfo['total_nilai']) }} / {{ '{:,}'.format(instansInfo['total_nilai'] - instansInfo['total_hasil']) }}</span>
+            </div>
+            <div class="input-group-text">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Daftar Barang</button>
+                <ul id="dropdown-menu" class="dropdown-menu">
+                </ul>
+            </div>
+            <div class="input-group-text">
+                <label for="kode_barang" class="visually-hidden">Kode Barang</label>
+                <input type="text" class="form-control" id="kode_barang" placeholder="Kode barang">
+            </div>
+            <div class="input-group-text">
+                <label for="harga_barang" class="visually-hidden">Harga Barang</label>
+                <input type="text" class="form-control" id="harga_barang" placeholder="Harga Barang">
+            </div>
+            <div class="input-group-text">
+                <button type="submit" class="btn btn-primary">Kirim</button>
+            </div>
+        </div>
+    </form>
+    <section class="mb-4">
+        <div class="card">
+            <div class="card-header text-center py-3">
+                <h5 class="mb-0 text-center">
+                    <strong>Histori Transaksi Hari ini</strong>
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th scope="col">Waktu Transaksi</th>
+                                <th scope="col">Kode Barang</th>
+                                <th scope="col">Nama Barang</th>
+                                <th scope="col">Harga Barang</th>
+                                <th scope="col">Admin</th>
+                                <!-- <th scope="col">Avg. Price</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set panjang = history|length %}
+                            {% for i in range(panjang) %}
+                            <tr>
+                                <th scope="row">{{ history[i][0]}}</th>
+                                <td>
+                                    <span class="text-success">
+                                        <i class="me-1"></i><span>{{ history[i][1] }}</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success">
+                                        <i class=" me-1"></i><span>{{ history[i][2] }}</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success">
+                                        <i class=" me-1"></i><span>Rp {{ '{:,}'.format(history[i][4]) }}</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success">
+                                        <i class=" me-1"></i><span>{{ history[i][5]}}</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+
+
+
+    // let data = JSON.parse('{{ data|tojson}}');
+    let daftar = JSON.parse('{{ daftar|tojson}}');
+    console.log(daftar);
+    ul = document.getElementById('dropdown-menu');
+
+    let pilih = (arg) => {
+        document.getElementById("kode_barang").value = arg;
+        document.getElementById("harga_barang").value = daftar[arg][1];
+    };
+
+    for (let key in daftar) {
+        let li = document.createElement('li');
+        li.innerHTML = `<a class="dropdown-item" onclick="pilih('${key}')">${daftar[key][0]} : ${daftar[key][1]}</a>`
+        ul.appendChild(li);
+    }
+
+
+    // for (let i = 0; i < daftar.kode_barang.length; i++) {
+    //     let li = document.createElement('li');
+    //     li.innerHTML = `<a class="dropdown-item" onclick="pilih('${daftar.kode_barang[i]}')">${daftar.kode_barang[i]} : ${daftar.nama_barang[i]}</a>`
+    //     ul.appendChild(li);
+    // }
+
+
+
+
+</script>
+
+<!--Main layout-->
+{% endblock %}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Access API with jQuery</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>List of Users</h2>
+    <ul id="user-list">
+        <!-- Data dari API akan ditampilkan di sini -->
+    </ul>
+
+    <script>
+        $.ajax({
+            url: 'https://coconut012.pythonanywhere.com/api/daftar',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                const userList = $('#user-list');
+                console.log(data);
+                for (const kunci in data){
+                    const user = data[kunci];
+                    const listItem = $('<li>').text(`ID: ${kunci}, Nama: ${user.nama}, Email: ${user.email}, No Telp: ${user.no_telp}`);
+                    userList.append(listItem);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

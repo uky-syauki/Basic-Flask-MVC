@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .input-group {
+        width: 100%;
+    }
+    .spasi {
+        margin-left: 60%;
+    }
+    .mb-4 {
+        margin-bottom: 0 !important;
+    }
+    /* .card_body {
+        padding: 0.5rem 0.5rem !important;
+    } */
+</style>
+
+<div class="container pt-4">
+    <!-- Section: Main chart -->
+    <section class="mb-8">
+        <div class="row">
+            <div class="col-xl-6 col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between p-md-1">
+                            <div class="d-flex flex-row">
+                                <div class="align-self-center">
+                                    <h2 class="h1 mb-0 me-4">
+                                        {{ "{:,}".format(data_char.total_asset) }}
+                                    </h2>
+                                </div>
+                                <div>
+                                    <h4>Total Asset</h4>
+                                    <p class="mb-0">{{ "{:,}".format(data_char.total_barang) }} Stok Barang</p>
+                                </div>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-wallet text-success fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between p-md-1">
+                            <div class="d-flex flex-row">
+                                <div class="align-self-center">
+                                    <h2 class="h1 mb-0 me-4">{{ "{:,}".format(data_char.total_asset_jual) }}</h2>
+                                </div>
+                                <div>
+                                    <h4>Total Cost</h4>
+                                    <p class="mb-0">Margin Asset</p>
+                                </div>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-wallet text-success fa-3x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header py-3">
+                    
+                <form action="" method="post">
+                    {{ form.csrf_token }}
+                    <div class="input-group mb-4">
+                        <!-- <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between px-md-1">
+                                    <div class="align-self-center">
+                                        <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                                    </div>
+                                    <div class="text-end">
+                                        <h3>278</h3>
+                                        <p class="mb-0">New Posts</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <h5 class="text-center"><strong>Sales</strong></h5> -->
+                        <div class="spasi">
+                            <!-- <h2 align="center">Dasboard</h2 -->
+                        </div>
+                        <div class="input-group-text">Filter</div>
+                        {{ form.tahun.label(class="input-group-text", id="btnGroupAddon") }}
+                        {{ form.tahun(size=4, class="form-control", placeholder="2023", aria_label="2023",aria_describeby="btnGroupAddon") }}
+
+                        {{ form.bulan.label(class="input-group-text", id="btnGroupAddon2") }}
+                        {{ form.bulan(size=2, class="form-control", placeholder="01-12", aria_label="01-12",aria_describeby="btnGroupAddon2") }}
+
+
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="card-body">
+                <canvas class="my-4 w-100" id="myChart" height="300"></canvas>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Penjualan</th>
+                            <th scope="col">Keuntungan</th>
+                            <th scope="col">Barang Terjual</th>
+                            <!-- <th scope="col">Product Revenue</th>
+                            <th scope="col">Avg. Price</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set panjang = data_char.pltx|length %}
+                        <tr>
+                            <th scope="row">Total</th>
+                            <td id="total">Rp {{ data_char.total }}</td>
+                            <td id="total_keuntungan">Rp {{ data_char.total_keuntungan }}</td>
+                            <td id="total_terjual">{{ data_char.total_terjual }}</td>
+                            <!-- <td>$4,787.64</td>
+                            <td>$13.68</td> -->
+                        </tr>
+                        <tr>
+                            <th scope="row">Rata-rata</th>
+                            <td id="RTotal"></td>
+                            <td id="RTotal_keuntungan"></td>
+                            <td id="RTotal_terjual"></td>
+                            <!-- <td>$4,787.64</td>
+                            <td>$13.68</td> -->
+                        </tr>
+                        {% for i in range(panjang) %}
+                        <tr>
+                            <th scope="row">{{ data_char.pltx[i] }}</th>
+                            <td>
+                                {% if data_char.dnilai[i] < (data_char.total/panjang) %}
+                                <span class="text-danger">
+                                    <i class="fas fa-caret-down me-1"></i><span>Rp {{ "{:,}".format(data_char.dnilai[i]) }}</span>
+                                </span>
+                                {% else %}
+                                <span class="text-success">
+                                    <i class="fas fa-caret-up me-1"></i><span>Rp {{ "{:,}".format(data_char.dnilai[i]) }}</span>
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if data_char.dpendapatan[i] < data_char.total_keuntungan/panjang %}
+                                <span class="text-danger">
+                                    <i class="fas fa-caret-down me-1"></i><span>Rp {{ "{:,}".format(data_char.dpendapatan[i]) }}</span>
+                                </span>
+                                {% else %}
+                                <span class="text-success">
+                                    <i class="fas fa-caret-up me-1"></i><span>Rp {{ "{:,}".format(data_char.dpendapatan[i]) }}</span>
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if data_char.pltv[i] < data_char.total_terjual/panjang %}
+                                <span class="text-danger">
+                                    <i class="fas fa-caret-down me-1"></i><span>{{ "{:,}".format(data_char.pltv[i]) }}</span>
+                                </span>
+                                {% else %}
+                                <span class="text-success">
+                                    <i class="fas fa-caret-up me-1"></i><span>{{ "{:,}".format(data_char.pltv[i]) }}</span>
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>278</h3>
+                                <p class="mb-0">New Posts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>278</h3>
+                                <p class="mb-0">New Posts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>278</h3>
+                                <p class="mb-0">New Posts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>278</h3>
+                                <p class="mb-0">New Posts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>278</h3>
+                                <p class="mb-0">New Posts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-pencil-alt text-info fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>278</h3>
+                                <p class="mb-0">New Posts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="far fa-comment-alt text-warning fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>156</h3>
+                                <p class="mb-0">New Comments</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-chart-line text-success fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>64.89 %</h3>
+                                <p class="mb-0">Bounce Rate</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-sm-6 col-12 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between px-md-1">
+                            <div class="align-self-center">
+                                <i class="fas fa-map-marker-alt text-danger fa-3x"></i>
+                            </div>
+                            <div class="text-end">
+                                <h3>423</h3>
+                                <p class="mb-0">Total Visits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- Section: Main chart -->
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script>
+    var jsonData = {{ data_char|tojson }};
+    document.getElementById('total').innerText = "Rp " + jsonData.total.toLocaleString()
+    document.getElementById('total_keuntungan').innerText = "Rp " + jsonData.total_keuntungan.toLocaleString();
+    document.getElementById('total_terjual').innerText = jsonData.total_terjual.toLocaleString()
+    document.getElementById('RTotal').innerText = "Rp " + Math.floor(jsonData.total/jsonData.pltx.length).toLocaleString();
+    document.getElementById('RTotal_keuntungan').innerText = "Rp " + Math.floor(jsonData.total_keuntungan/jsonData.pltx.length).toLocaleString();
+    document.getElementById('RTotal_terjual').innerText = Math.floor(jsonData.total_terjual/jsonData.pltx.length).toLocaleString();
+    console.log(jsonData);
+    var ctx = document.getElementById("myChart");
+
+    var myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: jsonData.pltx,
+            datasets: [
+                {
+                    data: jsonData.pltv,
+                    lineTension: 0,
+                    backgroundColor: "transparent",
+                    borderColor: "#007bff",
+                    borderWidth: 4,
+                    pointBackgroundColor: "#007bff",
+                },
+            ],
+        },
+        options: {
+            scales: {
+                yAxes: [
+                    {
+                        ticks: {
+                            beginAtZero: false,
+                        },
+                    },
+                ],
+            },
+            legend: {
+                display: false,
+            },
+        },
+    });
+</script>
+<!-- <script src="{{ url_for('static', filename='char1.js') }}"></script> -->
+{% endblock %}

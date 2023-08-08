@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .input-group-text {
+        padding: .3rem;
+        border: none;
+    }
+</style>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div id="flash-message" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h3>HALAMAN KELOLA BARANG</h3>
+    <form action="{{ url_for('kelola') }}" method="post">
+        {{ formAdd.csrf_token }}
+
+
+        <!-- <div class="input-group-text">
+
+            </div> -->
+
+        <div class="input-group">
+            <div class="input-group-text">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Daftar Barang</button>
+                <ul id="dropdown-menu" class="dropdown-menu">
+                </ul>
+            </div>
+        </div>
+        <div class="input-group mb-4">
+            <div class="input-group-text">
+                <label for="kode_barang" class="visually-hidden">Kode Barang</label>
+                {{ formAdd.kode_barang(id="kode_barang", class="form-control", placeholder="Kode Barang", size="9") }}
+                <!-- <input type="text" class="form-control" id="kode_barang" placeholder="Kode barang" size="9"> -->
+            </div>
+            <div class="input-group-text">
+                <label for="nama_barang" class="visually-hidden">Nama Barang</label>
+                {{ formAdd.nama_barang(id="nama_barang", class="form-control", placeholder="Nama Barang", size="20") }}
+                <!-- <input type="text" class="form-control" id="nama_barang" placeholder="Nama Barang" size="20"> -->
+            </div>
+            <div class="input-group-text">
+                <label for="harga_jual" class="visually-hidden">Harga Jual</label>
+                {{ formAdd.harga_jual(id="harga_jual", class="form-control", placeholder="Harga Jual", size="9") }}
+                <!-- <input type="text" class="form-control" id="harga_jual" placeholder="Harga Barang" size="9"> -->
+            </div>
+            <div class="input-group-text">
+                <label for="harga_modal" class="visually-hidden">Harga Modal</label>
+                {{ formAdd.harga_modal(id="harga_modal", class="form-control", placeholder="Harga Modal", size="9")}}
+                <!-- <input type="text" class="form-control" id="harga_modal" placeholder="Harga Modal" size="9"> -->
+            </div>
+            <div class="input-group-text">
+                <label for="stok" class="visually-hidden">Stok</label>
+                {{ formAdd.stok(id="stok", class="form-control", placeholder="Stok", size="4") }}
+                <!-- <input type="text" class="form-control" id="stok" placeholder="Stok" size="4"> -->
+            </div>
+            <div class="input-group-text">
+                {{ formAdd.add(class="btn btn-primary") }}
+                <!-- <button type="submit" class="btn btn-primary">Add</button> -->
+            </div>
+            <div class="input-group-text">
+                {{ formAdd.update(class="btn btn-primary")}}
+                <!-- <button type="submit" class="btn btn-primary">Update</button> -->
+            </div>
+            <div class="input-group-text">
+                {{ formAdd.delete(class="btn btn-primary") }}
+                <!-- <button type="submit" class="btn btn-primary">Delete</button> -->
+            </div>
+            <div class="input-group-text">
+                {{ formAdd.add_stok(class="btn btn-primary") }}
+                <!-- <button type="submit" class="btn btn-primary">Add Stok</button> -->
+            </div>
+        </div>
+    </form>
+    <section class="mb-4">
+        <div class="card">
+            <div class="card-header text-center py-3">
+                <!-- <h5 class="mb-0 text-center"> -->
+                    <form action="{{ url_for('kelola') }}" method="post">
+                        <div class="input-group">
+                            <div class="input-group-text">
+                                <strong>Daftar Barang</strong>
+                            </div>
+                            <div class="input-group-text">
+                                {{ filterForm.cari(class="form-control", placeholder="Filter..", size="9")}}
+                            </div>
+                            <div class="input-group-text">
+                                {{ filterForm.kode_barang(class="btn btn-primary") }}
+                            </div>
+                            <div class="input-group-text">
+                                {{ filterForm.nama_barang(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </form>
+                <!-- </h5> -->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th scope="col">Kode Barang</th>
+                                <th scope="col">Nama Barang</th>
+                                <th scope="col">Harga Jual</th>
+                                <th scope="col">Harga Modal</th>
+                                <th scope="col">Stok</th>
+                                <!-- <th scope="col">Avg. Price</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr>
+                                <th scope="row">Total</th>
+                                <td>18,492</td>
+                                <td>228</td>
+                                <td>350</td>
+                                <td>$4,787.64</td>
+                                <td>$13.68</td>
+                            </tr> -->
+                            {% set panjang = dataBarang[0]|length %}
+                            {% for i in range(panjang) %}
+                            <tr>
+                                <th scope="row">{{ dataBarang[0][i][0] }}</th>
+                                <td>
+                                    <span class="text-success">
+                                        <i class="me-1"></i><span>{{ dataBarang[0][i][1] }}</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success">
+                                        <i class=" me-1"></i><span>Rp {{ '{:,}'.format(dataBarang[0][i][2]) }}</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success">
+                                        <i class=" me-1"></i><span>Rp {{ '{:,}'.format(dataBarang[0][i][3]) }}</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success">
+                                        <i class=" me-1"></i><span>{{ dataBarang[0][i][4] }}</span>
+                                    </span>
+                                </td>
+                                <!-- <td>
+                                    <span class="text-danger">
+                                        <i class="me-1"></i><span>-11.5%</span>
+                                    </span>
+                                </td> -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+
+    setTimeout(function () {
+        if (document.getElementById("flash-message").classList[1] == "alert-success") {
+            document.getElementById("kode_barang").value = '';
+            document.getElementById("nama_barang").value = '';
+            document.getElementById("harga_jual").value = '';
+            document.getElementById("harga_modal").value = '';
+            document.getElementById("stok").value = '';
+        }
+        var flashMessage = document.getElementById('flash-message');
+        if (flashMessage) {
+            flashMessage.remove();
+        }
+    }, 4000);
+
+    let daftar = JSON.parse('{{ dataBarang[1]|tojson}}');
+    console.log(daftar);
+    ul = document.getElementById('dropdown-menu');
+
+    let pilih = (arg) => {
+        document.getElementById("kode_barang").value = arg;
+        document.getElementById("nama_barang").value = daftar[arg][1];
+        document.getElementById("harga_jual").value = daftar[arg][2];
+        document.getElementById("harga_modal").value = daftar[arg][3];
+        document.getElementById("stok").value = daftar[arg][4];
+    };
+
+    for (let key in daftar) {
+        let li = document.createElement('li');
+        li.innerHTML = `<a class="dropdown-item" onclick="pilih('${key}')">${daftar[key][0]} : ${daftar[key][1]}</a>`
+        ul.appendChild(li);
+    }
+</script>
+
+{% endblock %}
